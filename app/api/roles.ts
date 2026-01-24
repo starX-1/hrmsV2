@@ -166,7 +166,7 @@ export const getPermissions = async () => {
 
 export const assignPermissionToRole = async (roleId: string | number, permissionId: string | number) => {
     try {
-        const response = await hrmsApi.post(`/roles/${roleId}/permissions`, { permissionId });
+        const response = await hrmsApi.post("/role-permissions", { roleId, permissionId });
         return response.data;
     } catch (error) {
         console.error('Error assigning permission to role:', error);

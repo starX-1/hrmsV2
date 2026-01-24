@@ -106,6 +106,7 @@ export const sidebarConfig: SidebarSection[] = [
                 permission: "view_user_roles",
             },
             {
+                key: "role-permissions",
                 label: "Role Permissions",
                 href: "/dashboard/role-permissions",
                 permission: "view_role_permissions",
