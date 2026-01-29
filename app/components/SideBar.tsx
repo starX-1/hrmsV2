@@ -31,7 +31,7 @@ const Sidebar = () => {
     const handleLogout = () => {
         sessionStorage.clear();
         localStorage.removeItem('userRole');
-        signOut({ callbackUrl: '/authPages/login' });
+        signOut({ callbackUrl: '/login' });
     };
 
     return (

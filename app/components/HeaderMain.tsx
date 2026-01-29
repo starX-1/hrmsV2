@@ -46,7 +46,7 @@ const Header = () => {
                     {/* CTA Buttons */}
                     <div className="hidden md:flex items-center space-x-4">
                         <Link
-                            href="/authPages/login"
+                            href="/login"
                             className="px-4 py-2 text-gray-700 font-medium hover:text-green-700 transition-colors"
                         >
                             Sign In
@@ -85,7 +85,7 @@ const Header = () => {
                             ))}
                             <div className="pt-4 space-y-3">
                                 <Link
-                                    href="/authPages/login"
+                                    href="/login"
                                     className="block text-center py-3 text-gray-700 font-medium border border-gray-300 rounded-lg hover:border-green-700 hover:text-green-700 transition-colors"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
