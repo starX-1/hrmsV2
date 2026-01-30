@@ -176,7 +176,7 @@ export const assignPermissionToRole = async (roleId: string | number, permission
 
 export const removePermissionFromRole = async (roleId: string | number, permissionId: string | number) => {
     try {
-        const response = await hrmsApi.delete(`/roles/${roleId}/permissions/${permissionId}`);
+        const response = await hrmsApi.delete(`/role-permissions/remove`, { data: { roleId, permissionId } });
         return response.data;
     } catch (error) {
         console.error('Error removing permission from role:', error);
