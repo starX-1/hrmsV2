@@ -71,6 +71,12 @@ export const sidebarConfig: SidebarSection[] = [
                 permission: "view_team_leave_requests",
             },
             {
+                key: "company-leave-requests",
+                label: "Company Leave Requests",
+                href: "/dashboard/leave-requests/company",
+                permission: "approve_leave_request",
+            },
+            {
                 key: "leave-balances",
                 label: "Leave Balances",
                 href: "/dashboard/leave-balances",

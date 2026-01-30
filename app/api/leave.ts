@@ -60,3 +60,25 @@ export const approveLeaveRequest = async (id: any) => {
     const response = await hrmsApi.put(`/leave-requests/${id}/approve`);
     return response.data;
 }
+
+export const getDepartmentLeaveRequests = async () => {
+    const response = await hrmsApi.get('/leave-requests/manager/comments');
+    return response.data;
+}
+
+export const getCompanyLeaveRequests = async (companyId: any) => {
+    const response = await hrmsApi.get(`/leave-requests/company/${companyId}`);
+    return response.data;
+}
+
+export const processLeaveRequestDecision = async (
+    requestId: number,
+    data: {
+        employeeId: number;
+        action: 'comment' | 'reject' | 'approve';
+        comment: string;
+    }
+) => {
+    const response = await hrmsApi.post(`/leave-requests/${requestId}/decision`, data);
+    return response.data;
+}
