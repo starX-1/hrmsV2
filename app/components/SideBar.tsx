@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { sidebarConfig } from "../config/sidebar";
 import { canAccessMenu } from "../utils/authorization";
 import { useAuth } from "../utils/authContext";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Menu, X, ChevronRight } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const Sidebar = () => {
     const { user } = useAuth();
+    const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
 
@@ -20,6 +22,18 @@ const Sidebar = () => {
             r.role?.rolePermissions?.map((rp: any) => rp.permission?.name)
         ) ??
         [];
+
+    const activeHref = useMemo(() => {
+        const allItems = sidebarConfig.flatMap(section => section.items);
+        const matchingItems = allItems.filter(item =>
+            pathname === item.href ||
+            (pathname.startsWith(item.href) && item.href !== '/dashboard')
+        );
+        // Sort by length descending to get the most specific match
+        const bestMatch = matchingItems.sort((a, b) => b.href.length - a.href.length)[0];
+        return bestMatch?.href;
+    }, [pathname]);
+
 
     const toggleSection = (title: string) => {
         setExpandedSections(prev => ({
@@ -117,25 +131,40 @@ const Sidebar = () => {
 
                                 {isExpanded && (
                                     <ul className="space-y-1 ml-1">
-                                        {visibleItems.map(item => (
-                                            <li key={item.href}>
-                                                <Link
-                                                    href={item.href}
-                                                    onClick={() => setIsOpen(false)}
-                                                    className={`
+                                        {visibleItems.map(item => {
+                                            const isActive = activeHref === item.href;
+
+                                            return (
+                                                <li key={item.href}>
+                                                    <Link
+                                                        href={item.href}
+                                                        onClick={() => setIsOpen(false)}
+                                                        className={`
                                                         flex items-center space-x-3 rounded-lg px-3 py-2.5 text-sm
                                                         transition-all duration-200 group
-                                                        hover:bg-emerald-50 hover:shadow-sm hover:border-l-4 hover:border-l-emerald-500 hover:pl-2.5
-                                                        text-white hover:text-emerald-800
                                                         relative overflow-hidden
+                                                        ${isActive
+                                                                ? 'bg-emerald-50 shadow-sm border-l-4 border-l-emerald-500 pl-2.5 text-emerald-800'
+                                                                : 'text-white hover:bg-emerald-50 hover:shadow-sm hover:border-l-4 hover:border-l-emerald-500 hover:pl-2.5 hover:text-emerald-800'}
                                                     `}
-                                                >
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-300 group-hover:bg-emerald-500 transition-colors"></div>
-                                                    <span className="font-medium">{item.label}</span>
-                                                    <div className="absolute inset-y-0 left-0 w-1 bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                                </Link>
-                                            </li>
-                                        ))}
+                                                    >
+                                                        <div className={`
+                                                        w-1.5 h-1.5 rounded-full transition-colors
+                                                        ${isActive
+                                                                ? 'bg-emerald-500'
+                                                                : 'bg-emerald-300 group-hover:bg-emerald-500'}
+                                                    `}></div>
+                                                        <span className="font-medium">{item.label}</span>
+                                                        <div className={`
+                                                        absolute inset-y-0 left-0 w-1 bg-emerald-500 transition-opacity
+                                                        ${isActive
+                                                                ? 'opacity-100'
+                                                                : 'opacity-0 group-hover:opacity-100'}
+                                                    `}></div>
+                                                    </Link>
+                                                </li>
+                                            )
+                                        })}
                                     </ul>
                                 )}
                             </div>

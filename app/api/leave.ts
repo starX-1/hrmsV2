@@ -77,6 +77,7 @@ export const processLeaveRequestDecision = async (
         employeeId: number;
         action: 'comment' | 'reject' | 'approve';
         comment: string;
+        totalDays?: number;
     }
 ) => {
     const response = await hrmsApi.post(`/leave-requests/${requestId}/decision`, data);

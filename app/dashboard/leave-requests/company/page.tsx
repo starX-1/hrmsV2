@@ -86,6 +86,7 @@ export default function CompanyLeaveRequestsPage() {
     const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
     const [comment, setComment] = useState('');
+    const [editedTotalDays, setEditedTotalDays] = useState<number | string>(''); // State for editable total days
     const [action, setAction] = useState('approve'); // Default to approve for HR
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [stats, setStats] = useState({
@@ -132,6 +133,7 @@ export default function CompanyLeaveRequestsPage() {
     const handleOpenModal = (request: LeaveRequest) => {
         setSelectedRequest(request);
         setComment(request.managerComment || '');
+        setEditedTotalDays(request.totalDays || 0); // Initialize with existing total days
         setAction('approve'); // Default
         setIsCommentModalOpen(true);
     };
@@ -146,7 +148,8 @@ export default function CompanyLeaveRequestsPage() {
             await processLeaveRequestDecision(selectedRequest.id, {
                 employeeId: selectedRequest.employeeId,
                 action: action as 'approve' | 'reject' | 'comment',
-                comment
+                comment,
+                totalDays: Number(editedTotalDays) // Pass the edited total days
             });
             toast.success(`Request ${action}d successfully`);
             setIsCommentModalOpen(false);
@@ -484,10 +487,15 @@ export default function CompanyLeaveRequestsPage() {
                                             <div className="font-medium text-gray-900">{selectedRequest.leaveType.name}</div>
                                         </div>
                                         <div>
-                                            <div className="text-xs font-medium text-gray-500 mb-1">Duration</div>
-                                            <div className="font-medium text-gray-900">
-                                                {selectedRequest.totalDays} day{selectedRequest.totalDays !== 1 ? 's' : ''}
-                                            </div>
+                                            <div className="text-xs font-medium text-gray-500 mb-1">Duration (Days)</div>
+                                            <input
+                                                type="number"
+                                                value={editedTotalDays}
+                                                onChange={(e) => setEditedTotalDays(e.target.value)}
+                                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-1 focus:outline-none focus:ring-green-500 focus:border-green-500 outline-none transition-all text-gray-900 placeholder-gray-400 font-medium"
+                                                min="0.5"
+                                                step="0.5"
+                                            />
                                         </div>
                                     </div>
 
@@ -536,11 +544,25 @@ export default function CompanyLeaveRequestsPage() {
                                         </button>
                                     </div>
                                 </div>
+                                {/* total days input  */}
+                                <div>
+                                    <label htmlFor="totalDays" className="block text-sm font-medium text-gray-700 mb-2">
+                                        Total Days
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="totalDays"
+                                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-1 focus:outline-none focus:ring-green-500 focus:border-green-500 outline-none transition-all"
+                                        value={selectedRequest.totalDays ?? ''}
+                                        disabled
+                                    />
+                                </div>
 
                                 {/* Comment Input */}
                                 <div>
                                     <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">
                                         Comment <span className="text-gray-400 font-normal">(Optional)</span>
+                                        <p className='text-xs text-gray-500 mt-1'>Below is managers note.</p>
                                     </label>
                                     <textarea
                                         id="comment"
